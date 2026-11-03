@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Produit } from '../model/produit.model';
 import { ProduitService } from '../services/produit';
@@ -8,19 +8,20 @@ import { ProduitService } from '../services/produit';
   imports: [CommonModule, RouterLink],
   selector: 'app-produits',
   templateUrl: './produits.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class Produits implements OnInit {
 
-  produits: Produit[] = [];
+  produits!: Produit[];
 
   constructor(private produitService: ProduitService) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.chargerProduits();
   }
 
   chargerProduits() {
-    this.produitService.listeProduits().subscribe(prods => {
+    this.produitService.listeProduit().subscribe(prods => {
       console.log(prods);
       this.produits = prods;
     });
@@ -28,11 +29,10 @@ export class Produits implements OnInit {
 
   supprimerProduit(p: Produit) {
     let conf = confirm("Etes-vous sûr ?");
-    if (conf) {
+    if (conf)
       this.produitService.supprimerProduit(p.idProduit).subscribe(() => {
         console.log("produit supprimé");
         this.chargerProduits();
       });
-    }
   }
 }
